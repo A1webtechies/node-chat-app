@@ -28,3 +28,29 @@ $("#message-form").on("submit", function(e) {
     }
   );
 });
+socket.on("newLocation", function(message) {
+  var li = $("<li></li>");
+  var a = $('<a target ="_blank">I m Here</a>');
+  li.text(`${message.from}: `);
+  a.attr("href", message.url);
+  li.append(a);
+  $("#message").append(li);
+});
+var locationButton = $("#send-location");
+
+locationButton.on("click", function() {
+  if (!navigator.geolocation) {
+    alert("Your Browser does not support the goelocation");
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      socket.emit("newLocationMessage", {
+        longitude: position.coords.longitude,
+        latitude: position.coords.latitude
+      });
+    },
+    function() {
+      alert("Unable to fetch Geoloaction");
+    }
+  );
+});
